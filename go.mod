@@ -1,4 +1,4 @@
-module cookiejar
+module github.com/ShaPoHun/cookiejar
 
 go 1.22.1
 
