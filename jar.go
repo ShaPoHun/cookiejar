@@ -28,9 +28,9 @@ import (
 )
 
 // PublicSuffixList provides the public suffix of a domain. For example:
-//      - the public suffix of "example.com" is "com",
-//      - the public suffix of "foo1.foo2.foo3.co.uk" is "co.uk", and
-//      - the public suffix of "bar.pvt.k12.ma.us" is "pvt.k12.ma.us".
+//   - the public suffix of "example.com" is "com",
+//   - the public suffix of "foo1.foo2.foo3.co.uk" is "co.uk", and
+//   - the public suffix of "bar.pvt.k12.ma.us" is "pvt.k12.ma.us".
 //
 // Implementations of PublicSuffixList must be safe for concurrent use by
 // multiple goroutines.
@@ -72,12 +72,17 @@ type Options struct {
 	// (useful for tests). If this is true, the value of Filename will be
 	// ignored.
 	NoPersist bool
+
+	// AllPersist specifies whether all persistence should be used
+	AllPersist bool
 }
 
 // Jar implements the http.CookieJar interface from the net/http package.
 type Jar struct {
 	// filename holds the file that the cookies were loaded from.
 	filename string
+
+	allPersist bool
 
 	psList PublicSuffixList
 
@@ -103,7 +108,8 @@ func New(o *Options) (*Jar, error) {
 // newAtTime is like New but takes the current time as a parameter.
 func newAtTime(o *Options, now time.Time) (*Jar, error) {
 	jar := &Jar{
-		entries: make(map[string]map[string]entry),
+		allPersist: o.AllPersist,
+		entries:    make(map[string]map[string]entry),
 	}
 	if o == nil {
 		o = &noOptions
@@ -695,8 +701,8 @@ func (j *Jar) domainAndType(host, domain string) (string, bool, error) {
 // DefaultCookieFile returns the default cookie file to use
 // for persisting cookie data.
 // The following names will be used in decending order of preference:
-//	- the value of the $GOCOOKIES environment variable.
-//	- $HOME/.go-cookies
+//   - the value of the $GOCOOKIES environment variable.
+//   - $HOME/.go-cookies
 func DefaultCookieFile() string {
 	if f := os.Getenv("GOCOOKIES"); f != "" {
 		return f

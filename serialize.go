@@ -131,13 +131,13 @@ func (j *Jar) writeTo(w io.Writer) error {
 	return nil
 }
 
-// allPersistentEntries returns all the entries in the jar, sorted by primarly by canonical host
+// allPersistentEntries returns all the entries in the jar, sorted by primarily by canonical host
 // name and secondarily by path length.
 func (j *Jar) allPersistentEntries() []entry {
 	var entries []entry
-	for _, submap := range j.entries {
-		for _, e := range submap {
-			if e.Persistent {
+	for _, subMap := range j.entries {
+		for _, e := range subMap {
+			if j.allPersist || e.Persistent {
 				entries = append(entries, e)
 			}
 		}
